@@ -15,12 +15,14 @@ import me.chanjar.weixin.common.util.StringUtils;
 import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutNewsMessage;
+import me.chanjar.weixin.mp.bean.WxMpXmlOutTextMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 
 import org.dom4j.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,12 +30,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.irengine.wechat.commons.MessageUtil;
 import com.irengine.wechat.connector.WeChatConnector;
+import com.irengine.wechat.connector.domain.OutMessage;
+import com.irengine.wechat.connector.service.OutMessageService;
 
 @Controller
 public class EndPointController {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(EndPointController.class);
+
+	@Autowired
+	private OutMessageService outMessageService;
 
 	/*
 	 * http://wenku.baidu.com/link?url=Z6AsEXjrbIRt-5V6wurFBXdSgQOCTRXtaR09HLdnwjTZ
@@ -169,20 +176,48 @@ public class EndPointController {
 			if (eventType.equals(MessageUtil.EVENT_TYPE_CLICK)) {
 				// 事件KEY值，与创建自定义菜单时指定的KEY值对应
 				String eventKey = requestMap.get("EventKey");
-				if (eventKey.equals("1")) {
+				 if (eventKey.equals("1")) {
+				 WxMpXmlOutNewsMessage.Item item = new
+				 WxMpXmlOutNewsMessage.Item();
+				 item.setUrl("http://mp.weixin.qq.com/s?__biz=MzAxNTExNzYwOQ==&mid=210883625&idx=1&sn=1cedaeff317a9289e85443699bcb6b06#rd");
+				 item.setPicUrl("http://mmbiz.qpic.cn/mmbiz/iaYUVZTQrW9BqjvI93vJQiaEtia2TPefjol5IBI0feqgSrTdfcxkLIKM7qT0AaRDatvd7iaYDg0b8JtA8bkPL1EV7Q/640?wx_fmt=jpeg&tp=webp&wxfrom=5");
+				 item.setDescription("诚邀大学生创业团队参展,优秀创业团队免收摊位费.");
+				 item.setTitle("首届全国高校校园商贸（教育超市）联合采购展览洽谈会大学生志愿者报名须知");
+				
+				 WxMpXmlOutNewsMessage m = WxMpXmlOutMessage.NEWS()
+				 .fromUser(fromUserName).toUser(toUserName)
+				 .addArticle(item).build();
+				
+				 logger.info(m.toXml());
+				
+				 response.getWriter().write(m.toXml());
+				 response.getWriter().close();
+				 }
+				OutMessage message = outMessageService.findOneById(Long
+						.parseLong(eventKey));
+				if(message==null){
+					return;
+				}
+				if ("news".equals(message.getType())) {
+					logger.debug("推送图文消息");
 					WxMpXmlOutNewsMessage.Item item = new WxMpXmlOutNewsMessage.Item();
-					item.setUrl("http://mp.weixin.qq.com/s?__biz=MzAxNTExNzYwOQ==&mid=210883625&idx=1&sn=1cedaeff317a9289e85443699bcb6b06#rd");
-					item.setPicUrl("http://mmbiz.qpic.cn/mmbiz/iaYUVZTQrW9BqjvI93vJQiaEtia2TPefjol5IBI0feqgSrTdfcxkLIKM7qT0AaRDatvd7iaYDg0b8JtA8bkPL1EV7Q/640?wx_fmt=jpeg&tp=webp&wxfrom=5");
-					item.setDescription("诚邀大学生创业团队参展,优秀创业团队免收摊位费.");
-					item.setTitle("首届全国高校校园商贸（教育超市）联合采购展览洽谈会大学生志愿者报名须知");
-
+					item.setUrl(message.getUrl());
+					item.setPicUrl(message.getPicUrl());
+					item.setDescription(message.getContent());
+					item.setTitle(message.getTitle());
 					WxMpXmlOutNewsMessage m = WxMpXmlOutMessage.NEWS()
 							.fromUser(fromUserName).toUser(toUserName)
 							.addArticle(item).build();
-
 					logger.info(m.toXml());
-
 					response.getWriter().write(m.toXml());
+					response.getWriter().close();
+				}
+				if ("text".equals(message.getType())) {
+					logger.debug("推送文本消息");
+					WxMpXmlOutTextMessage text = WxMpXmlOutMessage
+							.TEXT().fromUser(fromUserName).toUser(toUserName)
+							.content(message.getContent()).build();
+					response.getWriter().write(text.toXml());
 					response.getWriter().close();
 				}
 			}

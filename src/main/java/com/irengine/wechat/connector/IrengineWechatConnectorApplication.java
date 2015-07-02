@@ -17,18 +17,4 @@ public class IrengineWechatConnectorApplication {
 		SpringApplication.run(IrengineWechatConnectorApplication.class, args);
 	}
 
-//	@Bean
-//	public ViewResolver viewResolver() {
-//		ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-//		templateResolver.setTemplateMode("HTML5");
-//		templateResolver.setPrefix("html/");
-//		templateResolver.setSuffix(".html");
-//
-//		SpringTemplateEngine engine = new SpringTemplateEngine();
-//		engine.setTemplateResolver(templateResolver);
-//
-//		ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
-//		viewResolver.setTemplateEngine(engine);
-//		return viewResolver;
-//	}
 }
