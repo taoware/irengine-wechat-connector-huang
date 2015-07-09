@@ -1,14 +1,21 @@
 package com.irengine.wechat.connector.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "ss_activity")
@@ -19,9 +26,11 @@ public class Activity extends EntityBase {
 	@Column(nullable = false)
 	private String name;// 活动名称,决定菜单名
 
+	@JsonIgnore
 	@Column(nullable = false)
 	private String indexName;// 主页名(不带.html)
 
+	@JsonIgnore
 	@Column(nullable = false, unique = true)
 	private String folderName;// 文件名(不重名)
 
@@ -29,25 +38,48 @@ public class Activity extends EntityBase {
 
 	private String description;// 活动描述
 
+	@JsonIgnore
+	@Column(length=1000)
 	private String url;
 	
 	@Column(nullable = false)
 	@Temporal(TemporalType.DATE)
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+08:00")
 	private Date startDate;
 
 	@Column(nullable = false)
 	@Temporal(TemporalType.DATE)
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+08:00")
 	private Date endDate;
+	
 
+	private List<WCUser> wcUsers=new ArrayList<WCUser>();
+	
+	@JsonIgnore
+    @ManyToMany
+    @JoinTable(name="ss_activity_wcuser",
+          joinColumns=@JoinColumn(name="activity_id"),
+          inverseJoinColumns=@JoinColumn(name="wcuser_id"))
+	public List<WCUser> getWcUsers() {
+		return wcUsers;
+	}
+
+	public void setWcUsers(List<WCUser> wcUsers) {
+		this.wcUsers = wcUsers;
+	}
+
+	@Transient
+	public long getCount() {
+		return wcUsers.size();
+	}
+	
 	public Activity() {
 		super();
 	}
 
 	public Activity(boolean disable, String name, String indexName,
-			String folderName, String type, String description, Date startDate,
-			Date endDate,String url) {
+			String folderName, String type, String description, String url,
+			Date startDate, Date endDate) {
 		super();
 		this.disable = disable;
 		this.name = name;
@@ -55,9 +87,9 @@ public class Activity extends EntityBase {
 		this.folderName = folderName;
 		this.type = type;
 		this.description = description;
+		this.url = url;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.url=url;
 	}
 
 	public String getUrl() {

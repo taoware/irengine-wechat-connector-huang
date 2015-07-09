@@ -31,15 +31,15 @@ public class ActivityService {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(ActivityService.class);
-	
+
 	@Autowired
 	private ActivityDao activityDao;
-	
+
 	@Autowired
 	private OutMessageService outMessageService;
-	
+
 	public Activity save(Activity activity) {
-		Activity returnActivity=activityDao.save(activity);
+		Activity returnActivity = activityDao.save(activity);
 		return returnActivity;
 	}
 
@@ -51,8 +51,10 @@ public class ActivityService {
 		return activityDao.findOne(id);
 	}
 
+	/** 每天早上00:05自动更新一次菜单 */
 	@Scheduled(cron = "0 5 0 * * ?")
 	public void updateMenu() throws UnsupportedEncodingException {
+		logger.debug("自动生成菜单并且更新");
 		/* 检测所有活动 */
 		List<Activity> activitys = findAll();
 		List<OutMessage> messages = outMessageService.findAll();
@@ -101,18 +103,14 @@ public class ActivityService {
 			WeChatConnector.getMpService().menuDelete();
 			WxMenu menu = WxMenu.fromJson(isMenu);
 			WeChatConnector.getMpService().menuCreate(menu);
-			logger.info("create menu succeed.");
+			logger.info("创建菜单成功");
 		} catch (WxErrorException e) {
-			logger.error("create menu failed.");
+			logger.error("创建菜单失败");
 		}
 	}
 
+	public List<Activity> findAllByType(String type) {
+		return activityDao.findAllByType(type);
+	}
+	
 }
-
-
-
-
-
-
-
-

@@ -1,17 +1,24 @@
 package com.irengine.wechat.connector.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "ss_message")
+@Table(name = "ss_out_message")
 public class OutMessage extends EntityBase{
 
 	@Column(nullable=false)
@@ -20,8 +27,10 @@ public class OutMessage extends EntityBase{
 	@Column(nullable=false)
 	private String content;//文本内容
 	
+	@Column(length=1000)
 	private String url;//点击图文消息跳转的链接
 	
+	@Column(length=1000)
 	private String picUrl;//图片url
 	
 	private String title;//图文消息标题
@@ -31,16 +40,28 @@ public class OutMessage extends EntityBase{
 	
 	@Column(nullable=false)
 	@Temporal(TemporalType.DATE)
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+08:00")
 	private Date startDate;
 	
 	@Column(nullable=false)
 	@Temporal(TemporalType.DATE)
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+08:00")
 	private Date endDate;
 
 	private boolean disable;// 是否被禁用(false为启用)
 	
+	@JsonIgnore
+    @ManyToMany
+    @JoinTable(name="ss_message_wcuser",
+          joinColumns=@JoinColumn(name="message_id"),
+          inverseJoinColumns=@JoinColumn(name="wcuser_id"))
+	private List<WCUser> wcUsers=new ArrayList<WCUser>();
+	
+	@Transient
+	public long getCount() {
+		return wcUsers.size();
+	}
+
 	public OutMessage() {
 		super();
 	}

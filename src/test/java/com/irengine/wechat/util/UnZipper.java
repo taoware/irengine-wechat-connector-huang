@@ -28,12 +28,12 @@ public class UnZipper {
 			path = path.substring(0, path.lastIndexOf("\\"));
 		}
 		ZipFile zip = new ZipFile(zipFile);
-		String name = "" + System.currentTimeMillis();
+		// String name = "" + System.currentTimeMillis();
 		for (Enumeration entries = zip.entries(); entries.hasMoreElements();) {
 			ZipEntry entry = (ZipEntry) entries.nextElement();
 			String zipEntryName = entry.getName();
-			zipEntryName = name
-					+ zipEntryName.substring(zipEntryName.indexOf("/"));
+			// zipEntryName = name+
+			// zipEntryName.substring(zipEntryName.indexOf("/"));
 			InputStream in = zip.getInputStream(entry);
 			// outPath输出目录
 			String outPath = path.substring(

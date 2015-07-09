@@ -24,7 +24,7 @@ public class UploadFileUtil {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(UploadFileUtil.class);
-	
+
 	private static String getWebDirectory(HttpServletRequest request) {
 		return request.getSession().getServletContext()
 				.getRealPath(DIRECTORY_UPLOAD);
@@ -54,11 +54,11 @@ public class UploadFileUtil {
 			 */
 			File uploadDirectory = new File(uploadDirectoryName);
 			FileUtils.forceMkdir(uploadDirectory);
-			logger.debug("-----------fileName:"+file.getOriginalFilename());
+			logger.debug("-----------fileName:" + file.getOriginalFilename());
 			File uploadFile = new File(uploadDirectoryName + "/"
 					+ file.getOriginalFilename());
 			FileUtils.writeByteArrayToFile(uploadFile, file.getBytes());
-			String name=unZipFiles(uploadFile);
+			String name = unZipFiles(uploadFile);
 			map.put("name", name);
 		}
 		return map;
@@ -68,23 +68,35 @@ public class UploadFileUtil {
 	private static String unZipFiles(File zipFile) throws IOException {
 		// 得到压缩文件所在目录
 		String path = zipFile.getAbsolutePath();
-		logger.debug("---------path:"+path);
+		logger.debug("---------path:" + path);
 		path = path.substring(0, path.lastIndexOf("/"));
 		@SuppressWarnings("resource")
 		ZipFile zip = new ZipFile(zipFile);
-		String name = "" + System.currentTimeMillis();
+		// String name = "" + System.currentTimeMillis();
+		Enumeration entries1 = zip.entries();
+		ZipEntry entry1 = (ZipEntry) entries1.nextElement();
+		String name = entry1.getName().substring(0, entry1.getName().length()-1);
 		for (Enumeration entries = zip.entries(); entries.hasMoreElements();) {
 			ZipEntry entry = (ZipEntry) entries.nextElement();
 			String zipEntryName = entry.getName();
-			zipEntryName = name
-					+ zipEntryName.substring(zipEntryName.indexOf("/"));
+			// zipEntryName = name
+			// + zipEntryName.substring(zipEntryName.indexOf("/"));
 			InputStream in = zip.getInputStream(entry);
 			// outPath输出目录
-			String outPath = path.substring(
-					0,
-					path.lastIndexOf("/") < 0 ? path.lastIndexOf("\\") : path
-							.lastIndexOf("/"))
-					+ "/WEB-INF/classes/views/" + zipEntryName;
+			String outPath="";
+			if(zipEntryName.indexOf(".html")!=-1){
+				outPath = path.substring(
+						0,
+						path.lastIndexOf("/") < 0 ? path.lastIndexOf("\\") : path
+								.lastIndexOf("/"))
+						+ "/WEB-INF/classes/views/" + zipEntryName;
+			}else{
+				outPath = path.substring(
+						0,
+						path.lastIndexOf("/") < 0 ? path.lastIndexOf("\\") : path
+								.lastIndexOf("/"))
+						+ "/WEB-INF/classes/static/" + zipEntryName;
+			}
 			// 判断路径是否存在,不存在则创建文件路径
 			File file = new File(outPath.substring(0, outPath.lastIndexOf('/')));
 			if (!file.exists()) {

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head lang="en" class="no-js">
+    <meta charset="UTF-8"  />
+    <title>提交成功</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+</head>
+<style>
+    body{
+        background: #ff6600;
+    }
+    .content{
+        text-align: center;
+        margin-top: 150px;
+        color: #fff;
+    }
+    .content h2{
+        font-size: 26px;
+    }
+    .content h3{
+        font-size: 20px;
+    }
+</style>
+<body>
+    <div class="content">
+        <h2 th:text="${msg}"></h2>
+        <h2>${msg}</h2>
+        <h1 th:text="${coupon}"></h1>
+        <h3>请妥善保存，方便时使用</h3>
+    </div>
+</body>
+</html>

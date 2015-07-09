@@ -4,22 +4,28 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.irengine.wechat.connector.domain.Activity;
+import com.irengine.wechat.connector.domain.WCUser;
 import com.irengine.wechat.connector.service.ActivityService;
 import com.irengine.wechat.connector.service.OutMessageService;
 import com.irengine.wechat.util.UploadFileUtil;
@@ -38,32 +44,67 @@ public class ActivityWebContorller {
 			.getLogger(ActivityWebContorller.class);
 
 	/**
-	 * 新建活动 POST ->/activity/test
+	 * 查询活动参与人的详细信息 GET ->/activity/{activity_id}/wcUsers
 	 */
-	@RequestMapping(value = "/test", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public String test(@RequestParam("file") MultipartFile file,
-			HttpServletRequest request) {
-		logger.debug("调用新建活动接口");
-		/* 上传文件并解压到指定路径 */
-		try {
-			UploadFileUtil.uploadAndExtractFile(file, request);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return "error";
+	@RequestMapping("/{activity_id}/wcUsers")
+	public ResponseEntity<?> getWCUser(@PathVariable("activity_id") Long id){
+		List<WCUser> users=new ArrayList<WCUser>();
+		users=activityService.findOneById(id).getWcUsers();
+		return new ResponseEntity<>(users,HttpStatus.OK);
+	}
+	
+	/**
+	 * 查询活动 GET ->/activity
+	 */
+	@RequestMapping("")
+	public ResponseEntity<?> getAll(
+			@RequestParam(value = "id", required = false) Long id,
+			@RequestParam(value = "type", required = false) String type) {
+		List<Activity> activitys = new ArrayList<Activity>();
+		if (id != null) {
+			logger.debug("按id查询活动,id=" + id);
+			Activity activity = activityService.findOneById(id);
+			return new ResponseEntity<>(activity, HttpStatus.OK);
+		} else if (type != null) {
+			logger.debug("按type查询活动,type=" + type);
+			activitys = activityService.findAllByType(type);
+			return new ResponseEntity<>(activitys, HttpStatus.OK);
+		} else {
+			logger.debug("查询全部活动");
+			activitys = activityService.findAll();
+			return new ResponseEntity<>(activitys, HttpStatus.OK);
 		}
-		return "success";
+
+	}
+
+	/**
+	 * 禁用活动 GET ->/activity/{id}/disable
+	 */
+	@RequestMapping("/{id}/disable")
+	public ResponseEntity<?> disable(@PathVariable("id") Long id) {
+		logger.debug("调用禁用/启用活动接口,id=" + id);
+		Activity activity = activityService.findOneById(id);
+		if (activity.isDisable()) {
+			activity.setDisable(false);
+		} else {
+			activity.setDisable(true);
+		}
+		activityService.save(activity);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
 	 * 新建活动 POST ->/activity
 	 */
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public String save(@RequestParam("name") String name,
+	public String save(
+			@RequestParam("name") String name,
 			@RequestParam("type") String type,
-			@RequestParam("description") String description,
+			@RequestParam(value = "description", required = false) String description,
 			@RequestParam("startDate") String startDateString,
 			@RequestParam("endDate") String endDateString,
-			@RequestParam("file") MultipartFile file,
+			@RequestParam(value = "file", required = false) MultipartFile file,
+			@RequestParam(value = "url", required = false) String url,
 			HttpServletRequest request, Model model) {
 		logger.debug("调用新建活动接口");
 		/* 处理日期 */
@@ -80,12 +121,18 @@ public class ActivityWebContorller {
 		}
 		/* 上传文件 */
 		try {
-			/* 得到解压后文件名,不能重名 */
-			String folderName = UploadFileUtil.uploadAndExtractFile(file,
-					request).get("name");
-			Activity activity = new Activity(false, name, "index",
-					folderName, type, description, startDate, endDate," ");
-			activityService.save(activity);
+			if ("url".equals(type)) {
+				Activity activity = new Activity(false, name, "", "", type,
+						description, url, startDate, endDate);
+				activityService.save(activity);
+			} else {
+				/* 得到解压后文件名,不能重名 */
+				String folderName = UploadFileUtil.uploadAndExtractFile(file,
+						request).get("name");
+				Activity activity = new Activity(false, folderName, "index",
+						folderName, type, description, url, startDate, endDate);
+				activityService.save(activity);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			model.addAttribute("msg", "上传并解压文件失败");
@@ -100,6 +147,23 @@ public class ActivityWebContorller {
 			return "error";
 		}
 		model.addAttribute("msg", "i got it!");
+		return "success";
+	}
+
+	/**
+	 * 新建活动 POST ->/activity/test
+	 */
+	@RequestMapping(value = "/test", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public String test(@RequestParam("file") MultipartFile file,
+			HttpServletRequest request) {
+		logger.debug("调用新建活动接口");
+		/* 上传文件并解压到指定路径 */
+		try {
+			UploadFileUtil.uploadAndExtractFile(file, request);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "error";
+		}
 		return "success";
 	}
 

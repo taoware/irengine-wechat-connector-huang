@@ -15,8 +15,8 @@ import com.irengine.wechat.connector.repository.OutMessageDao;
 public class OutMessageService {
 
 	@Autowired
-	private OutMessageDao outMessageDao; 
-	
+	private OutMessageDao outMessageDao;
+
 	public List<OutMessage> findAll() {
 		return (List<OutMessage>) outMessageDao.findAll();
 	}
@@ -27,6 +27,10 @@ public class OutMessageService {
 
 	public OutMessage save(OutMessage message) {
 		return outMessageDao.save(message);
+	}
+
+	public List<OutMessage> findAllByType(String type) {
+		return outMessageDao.findAllByType(type);
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.irengine.wechat.connector.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,8 +24,10 @@ import com.irengine.wechat.connector.WeChatConnector;
 import com.irengine.wechat.connector.domain.Activity;
 import com.irengine.wechat.connector.domain.Coupon;
 import com.irengine.wechat.connector.domain.User;
+import com.irengine.wechat.connector.domain.WCUser;
 import com.irengine.wechat.connector.service.ActivityService;
 import com.irengine.wechat.connector.service.UserService;
+import com.irengine.wechat.connector.service.WCUserService;
 
 @Controller
 public class ActivityController {
@@ -37,71 +40,75 @@ public class ActivityController {
 
 	@Autowired
 	private ActivityService activityService;
+
+	@Autowired
+	private WCUserService wcUserService;
 	
-	@RequestMapping("/greeting")
-	public String greeting(
-			@RequestParam(value = "name", required = false, defaultValue = "World") String name,
-			Model model) {
-		model.addAttribute("name", name);
-		return "greeting";
-	}
+	// @RequestMapping("/greeting")
+	// public String greeting(
+	// @RequestParam(value = "name", required = false, defaultValue = "World")
+	// String name,
+	// Model model) {
+	// model.addAttribute("name", name);
+	// return "greeting";
+	// }
 
-	@RequestMapping("/test")
-	public String test(HttpServletRequest request, Model model)
-			throws WxErrorException {
-		/* 用code能取得accesstoken,然后用accesstoken得到登录用户信息? */
-		String code = request.getParameter("code");
-		// AccessToken:用户的访问令牌
-		WxMpOAuth2AccessToken wxMpOAuth2AccessToken = WeChatConnector
-				.getMpService().oauth2getAccessToken(code);
-		// WxMpUser:微信用户信息
-		WxMpUser wxMpUser = WeChatConnector.getMpService().oauth2getUserInfo(
-				wxMpOAuth2AccessToken, null);
-		logger.debug("用户信息:" + wxMpUser.toString());
-		model.addAttribute("openid", wxMpUser.getOpenId());
-		return "html/index";
-	}
+	// @RequestMapping("/test")
+	// public String test(HttpServletRequest request, Model model)
+	// throws WxErrorException {
+	// /* 用code能取得accesstoken,然后用accesstoken得到登录用户信息? */
+	// String code = request.getParameter("code");
+	// // AccessToken:用户的访问令牌
+	// WxMpOAuth2AccessToken wxMpOAuth2AccessToken = WeChatConnector
+	// .getMpService().oauth2getAccessToken(code);
+	// // WxMpUser:微信用户信息
+	// WxMpUser wxMpUser = WeChatConnector.getMpService().oauth2getUserInfo(
+	// wxMpOAuth2AccessToken, null);
+	// logger.debug("用户信息:" + wxMpUser.toString());
+	// model.addAttribute("openid", wxMpUser.getOpenId());
+	// return "html/index";
+	// }
 
-	@RequestMapping("/today2")
-	public String today2(HttpServletRequest request, Model model)
-			throws WxErrorException {
-		logger.debug("跳转到/01/index.html");
+	// @RequestMapping("/today2")
+	// public String today2(HttpServletRequest request, Model model)
+	// throws WxErrorException {
+	// logger.debug("跳转到/01/index.html");
+	//
+	// /* 用code能取得accesstoken,然后用accesstoken得到登录用户信息? */
+	// String code = request.getParameter("code");
+	// // AccessToken:用户的访问令牌
+	// WxMpOAuth2AccessToken wxMpOAuth2AccessToken = WeChatConnector
+	// .getMpService().oauth2getAccessToken(code);
+	// // WxMpUser:微信用户信息
+	// WxMpUser wxMpUser = WeChatConnector.getMpService().oauth2getUserInfo(
+	// wxMpOAuth2AccessToken, null);
+	// logger.debug("用户信息:" + wxMpUser.toString());
+	// model.addAttribute("nickname", wxMpUser.getNickname());
+	// return "today2";
+	// }
 
-		/* 用code能取得accesstoken,然后用accesstoken得到登录用户信息? */
-		String code = request.getParameter("code");
-		// AccessToken:用户的访问令牌
-		WxMpOAuth2AccessToken wxMpOAuth2AccessToken = WeChatConnector
-				.getMpService().oauth2getAccessToken(code);
-		// WxMpUser:微信用户信息
-		WxMpUser wxMpUser = WeChatConnector.getMpService().oauth2getUserInfo(
-				wxMpOAuth2AccessToken, null);
-		logger.debug("用户信息:" + wxMpUser.toString());
-		model.addAttribute("nickname", wxMpUser.getNickname());
-		return "today2";
-	}
-
-	 /**今日派赠?
-	 * 输入手机号得到提货码?
-	 * (点击今日派赠按钮所连接的url)
-	 * 点击今日派赠,传递该用户的openId*/
-	 @RequestMapping("/today3")
-	 public String today3(HttpServletRequest request, Model model) throws
-	 WxErrorException {
-		 logger.debug("调/today3接口");
-	 /*用code能取得accesstoken,然后用accesstoken得到登录用户信息?*/
-	 String code = request.getParameter("code");
-	 //AccessToken:用户的访问令牌
-	 WxMpOAuth2AccessToken wxMpOAuth2AccessToken = WeChatConnector
-	 .getMpService().oauth2getAccessToken(code);
-	 //WxMpUser:微信用户信息
-	 WxMpUser wxMpUser = WeChatConnector.getMpService()
-	 .oauth2getUserInfo(wxMpOAuth2AccessToken, null);
-	
-	 String openId = wxMpUser.getOpenId();
-	 /*传递openId*/
-	 model.addAttribute("openid", openId);
-	 return "today";
-	 }
+	// /**今日派赠?
+	// * 输入手机号得到提货码?
+	// * (点击今日派赠按钮所连接的url)
+	// * 点击今日派赠,传递该用户的openId*/
+	// @RequestMapping("/today3")
+	// public String today3(HttpServletRequest request, Model model) throws
+	// WxErrorException {
+	// logger.debug("调/today3接口");
+	// /*用code能取得accesstoken,然后用accesstoken得到登录用户信息?*/
+	// String code = request.getParameter("code");
+	// //AccessToken:用户的访问令牌
+	// WxMpOAuth2AccessToken wxMpOAuth2AccessToken = WeChatConnector
+	// .getMpService().oauth2getAccessToken(code);
+	// //WxMpUser:微信用户信息
+	// WxMpUser wxMpUser = WeChatConnector.getMpService()
+	// .oauth2getUserInfo(wxMpOAuth2AccessToken, null);
+	//
+	// String openId = wxMpUser.getOpenId();
+	// /*传递openId*/
+	// model.addAttribute("openid", openId);
+	// return "today";
+	// }
 
 	/** 得到提货码 */
 	@RequestMapping("/coupon")
@@ -117,7 +124,7 @@ public class ActivityController {
 			logger.debug("------userId:" + user.getId());
 			model.addAttribute("msg", "您已领取过提货码:");
 			model.addAttribute("coupon", user.getCoupons().get(0).getCode());
-			return "html/success";
+			return "2015070901_ad/success";
 		} else {
 			/* 没被注册,绑定一个提货码 */
 			Coupon coupon = userService.registerActivity(
@@ -125,7 +132,7 @@ public class ActivityController {
 			logger.debug("------coupon:" + coupon.getCode());
 			model.addAttribute("msg", "恭喜，您获得一枚提取码:");
 			model.addAttribute("coupon", coupon.getCode());
-			return "html/success";
+			return "2015070901_ad/success";
 		}
 	}
 
@@ -192,9 +199,9 @@ public class ActivityController {
 	}
 
 	@RequestMapping("/today/{id}")
-	public String today(@PathVariable("id") Long id, HttpServletRequest request,
-			Model model) throws WxErrorException {
-		logger.debug("跳转活动,活动id="+id);
+	public String today(@PathVariable("id") Long id,
+			HttpServletRequest request, Model model) throws WxErrorException {
+		logger.debug("跳转活动,活动id=" + id);
 		/* 用code能取得accesstoken,然后用accesstoken得到登录用户信息? */
 		String code = request.getParameter("code");
 		// AccessToken:用户的访问令牌
@@ -204,13 +211,51 @@ public class ActivityController {
 		WxMpUser wxMpUser = WeChatConnector.getMpService().oauth2getUserInfo(
 				wxMpOAuth2AccessToken, null);
 		model.addAttribute("nickname", wxMpUser.getNickname());
-		Activity activity=activityService.findOneById(id);
-		if(activity!=null){
-			logger.debug("跳转页面:"+activity.getFolderName()+"/"+activity.getIndexName());
-			return activity.getFolderName()+"/"+activity.getIndexName();
-		}else{
+		Activity activity = activityService.findOneById(id);
+		if (activity != null) {
+			/*保存wcUser并且不重复记录*/
+			WCUser user=wcUserService.findOneByOpenId(wxMpUser.getOpenId());
+			if(user==null){
+				WCUser wcUser = new WCUser(wxMpUser.getOpenId(),
+						wxMpUser.getNickname(), wxMpUser.getSex(),
+						wxMpUser.getCity(), wxMpUser.getProvince(),
+						wxMpUser.getCountry(), wxMpUser.getUnionId());
+				user = wcUserService.save(wcUser);
+			}
+			/*检测该用户是否参加过该活动*/
+			boolean j=true;
+			if(activity.getWcUsers().size()>0){
+				for(WCUser wcUser1:activity.getWcUsers()){
+					if(wcUser1.getId()==user.getId()){
+						logger.debug("该用户已经浏览过该活动");
+						j=false;
+						break;
+					}
+				}
+			}
+			if(j==true){
+				logger.debug("该活动人数加1");
+				activity.getWcUsers().add(user);
+				activityService.save(activity);
+			}
+			logger.debug("跳转页面:" + activity.getFolderName() + "/"
+					+ activity.getIndexName());
+			return activity.getFolderName() + "/" + activity.getIndexName();
+		} else {
 			return "error";
 		}
 	}
+	// @RequestMapping("/test/today/{id}")
+	// public String testSend(@PathVariable("id") Long id, HttpServletRequest
+	// request,
+	// Model model) throws WxErrorException {
+	// Activity activity=activityService.findOneById(id);
+	// if(activity!=null){
+	// logger.debug("跳转页面:"+activity.getFolderName()+"/"+activity.getIndexName());
+	// return activity.getFolderName()+"/"+activity.getIndexName();
+	// }else{
+	// return "error";
+	// }
+	// }
 
 }
