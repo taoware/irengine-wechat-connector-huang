@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.irengine.wechat.connector.controller.ActivityWebContorller;
 import com.irengine.wechat.connector.domain.OutMessage;
 import com.irengine.wechat.connector.repository.OutMessageDao;
 
@@ -31,6 +30,14 @@ public class OutMessageService {
 
 	public List<OutMessage> findAllByType(String type) {
 		return outMessageDao.findAllByType(type);
+	}
+
+	public long count() {
+		return outMessageDao.count();
+	}
+
+	public void deleteOneById(Long id) {
+		outMessageDao.delete(id);
 	}
 
 }

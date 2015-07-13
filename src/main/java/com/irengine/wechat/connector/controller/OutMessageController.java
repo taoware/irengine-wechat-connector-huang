@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.irengine.wechat.connector.domain.OutMessage;
 import com.irengine.wechat.connector.service.ActivityService;
 import com.irengine.wechat.connector.service.OutMessageService;
+import com.irengine.wechat.util.PageUtil;
 
 @Controller
 @RequestMapping("/message")
@@ -38,13 +40,29 @@ public class OutMessageController {
 	@Autowired
 	private ActivityService activityService;
 
+	@RequestMapping(value="/listCount")
+	public ResponseEntity<?> getListCount(){
+		long count=outMessageService.count();
+		logger.debug("查询数据条数,count="+count);
+		return new ResponseEntity<>(count,HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/{id}",method = RequestMethod.DELETE)
+	public ResponseEntity<?> deleteOneById(@PathVariable("id") Long id){
+		logger.debug("删除id为"+id+"的推送消息");
+		outMessageService.deleteOneById(id);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
 	/**
 	 * 查询推送消息 GET ->/message
 	 */
 	@RequestMapping("")
 	public ResponseEntity<?> getAll(
 			@RequestParam(value = "id", required = false) Long id,
-			@RequestParam(value = "type", required = false) String type) {
+			@RequestParam(value = "type", required = false) String type,
+			@RequestParam(value = "offset", required = false) Integer offset,
+			@RequestParam(value = "limit", required = false) Integer limit) {
 		List<OutMessage> messages = new ArrayList<OutMessage>();
 		if (id != null) {
 			logger.debug("按id查询推送消息,id=" + id);
@@ -53,12 +71,15 @@ public class OutMessageController {
 		} else if (type != null) {
 			logger.debug("按type查询推送消息,type=" + type);
 			messages = outMessageService.findAllByType(type);
-			return new ResponseEntity<>(messages, HttpStatus.OK);
 		} else {
 			logger.debug("查询所有消息");
 			messages = outMessageService.findAll();
-			return new ResponseEntity<>(messages, HttpStatus.OK);
 		}
+		if(offset!=null&&limit!=null){
+			Map<String,Object> map=PageUtil.pagequery(messages,offset,limit);
+			return new ResponseEntity<>(map, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(messages, HttpStatus.OK);
 	}
 
 	/**
@@ -119,4 +140,5 @@ public class OutMessageController {
 		model.addAttribute("msg", "i got it");
 		return "success";
 	}
+
 }

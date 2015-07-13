@@ -1,7 +1,9 @@
 package com.irengine.wechat.connector.domain;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -55,7 +57,6 @@ public class Activity extends EntityBase {
 
 	private List<WCUser> wcUsers=new ArrayList<WCUser>();
 	
-	@JsonIgnore
     @ManyToMany
     @JoinTable(name="ss_activity_wcuser",
           joinColumns=@JoinColumn(name="activity_id"),
@@ -71,6 +72,26 @@ public class Activity extends EntityBase {
 	@Transient
 	public long getCount() {
 		return wcUsers.size();
+	}
+	
+	@Transient
+	public String getStatusText(){
+		if(disable==true){
+			return "已停止";
+		}else{
+			Date now = new Date();
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(endDate);
+			calendar.add(Calendar.DATE, 1);// 把日期往后增加一天.整数往后推,负数往前移动
+			endDate = calendar.getTime();
+			if(now.before(startDate)){
+				return "未进行";
+			}else if(now.after(endDate)){
+				return "已结束";
+			}else{
+				return "进行中";
+			}
+		}
 	}
 	
 	public Activity() {

@@ -57,7 +57,13 @@ public class ActivityService {
 		logger.debug("自动生成菜单并且更新");
 		/* 检测所有活动 */
 		List<Activity> activitys = findAll();
+		if(activitys.size()>5){
+			activitys=activitys.subList(0, 5);
+		}
 		List<OutMessage> messages = outMessageService.findAll();
+		if(messages.size()>5){
+			messages=messages.subList(0, 5);
+		}
 		/* 时间符合即更新到第一个以及菜单按钮 */
 		Date now = new Date();
 		// 待添加的活动
@@ -111,6 +117,14 @@ public class ActivityService {
 
 	public List<Activity> findAllByType(String type) {
 		return activityDao.findAllByType(type);
+	}
+
+	public long count() {
+		return activityDao.count();
+	}
+
+	public void deleteOneById(Long id) {
+		activityDao.delete(id);
 	}
 	
 }

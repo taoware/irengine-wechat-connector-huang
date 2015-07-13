@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,6 +29,7 @@ import com.irengine.wechat.connector.domain.Activity;
 import com.irengine.wechat.connector.domain.WCUser;
 import com.irengine.wechat.connector.service.ActivityService;
 import com.irengine.wechat.connector.service.OutMessageService;
+import com.irengine.wechat.util.PageUtil;
 import com.irengine.wechat.util.UploadFileUtil;
 
 @Controller
@@ -47,19 +49,27 @@ public class ActivityWebContorller {
 	 * 查询活动参与人的详细信息 GET ->/activity/{activity_id}/wcUsers
 	 */
 	@RequestMapping("/{activity_id}/wcUsers")
-	public ResponseEntity<?> getWCUser(@PathVariable("activity_id") Long id){
-		List<WCUser> users=new ArrayList<WCUser>();
-		users=activityService.findOneById(id).getWcUsers();
-		return new ResponseEntity<>(users,HttpStatus.OK);
+	public ResponseEntity<?> getWCUser(@PathVariable("activity_id") Long id,
+			@RequestParam(value = "offset", required = false) Integer offset,
+			@RequestParam(value = "limit", required = false) Integer limit) {
+		List<WCUser> users = new ArrayList<WCUser>();
+		users = activityService.findOneById(id).getWcUsers();
+		if (offset != null && limit != null) {
+			Map<String, Object> map = PageUtil.pagequery(users, offset, limit);
+			return new ResponseEntity<>(map, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(users, HttpStatus.OK);
 	}
-	
+
 	/**
 	 * 查询活动 GET ->/activity
 	 */
 	@RequestMapping("")
 	public ResponseEntity<?> getAll(
 			@RequestParam(value = "id", required = false) Long id,
-			@RequestParam(value = "type", required = false) String type) {
+			@RequestParam(value = "type", required = false) String type,
+			@RequestParam(value = "offset", required = false) Integer offset,
+			@RequestParam(value = "limit", required = false) Integer limit) {
 		List<Activity> activitys = new ArrayList<Activity>();
 		if (id != null) {
 			logger.debug("按id查询活动,id=" + id);
@@ -68,13 +78,17 @@ public class ActivityWebContorller {
 		} else if (type != null) {
 			logger.debug("按type查询活动,type=" + type);
 			activitys = activityService.findAllByType(type);
-			return new ResponseEntity<>(activitys, HttpStatus.OK);
 		} else {
 			logger.debug("查询全部活动");
 			activitys = activityService.findAll();
+		}
+		if (offset != null && limit != null) {
+			Map<String, Object> map = PageUtil.pagequery(activitys, offset,
+					limit);
+			return new ResponseEntity<>(map, HttpStatus.OK);
+		} else {
 			return new ResponseEntity<>(activitys, HttpStatus.OK);
 		}
-
 	}
 
 	/**
@@ -129,7 +143,7 @@ public class ActivityWebContorller {
 				/* 得到解压后文件名,不能重名 */
 				String folderName = UploadFileUtil.uploadAndExtractFile(file,
 						request).get("name");
-				Activity activity = new Activity(false, folderName, "index",
+				Activity activity = new Activity(false, name, "index",
 						folderName, type, description, url, startDate, endDate);
 				activityService.save(activity);
 			}
@@ -165,6 +179,20 @@ public class ActivityWebContorller {
 			return "error";
 		}
 		return "success";
+	}
+
+	@RequestMapping(value = "/listCount")
+	public ResponseEntity<?> getListCount() {
+		long count = activityService.count();
+		logger.debug("查询数据条数,count=" + count);
+		return new ResponseEntity<>(count, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<?> deleteOneById(@PathVariable("id") Long id) {
+		logger.debug("删除id为" + id + "的活动");
+		activityService.deleteOneById(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }
