@@ -71,14 +71,18 @@ public class OutMessage extends EntityBase{
 	
 	@Transient
 	public String getStatusText(){
+		Date now = new Date();
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(endDate);
+		calendar.add(Calendar.DATE, 1);// 把日期往后增加一天.整数往后推,负数往前移动
+		endDate = calendar.getTime();
 		if(disable==true){
-			return "已停止";
+			if(now.after(endDate)){
+				return "已结束";
+			}else{
+				return "已关闭";
+			}
 		}else{
-			Date now = new Date();
-			Calendar calendar = new GregorianCalendar();
-			calendar.setTime(endDate);
-			calendar.add(Calendar.DATE, 1);// 把日期往后增加一天.整数往后推,负数往前移动
-			endDate = calendar.getTime();
 			if(now.before(startDate)){
 				return "未进行";
 			}else if(now.after(endDate)){

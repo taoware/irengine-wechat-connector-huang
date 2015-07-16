@@ -5,6 +5,8 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +57,13 @@ public class ActivityWebContorller {
 			@RequestParam(value = "limit", required = false) Integer limit) {
 		List<WCUser> users = new ArrayList<WCUser>();
 		users = activityService.findOneById(id).getWcUsers();
+		Collections.sort(users, new Comparator<WCUser>() {
+			@Override
+			public int compare(WCUser o1, WCUser o2) {
+				// TODO Auto-generated method stub
+				return o2.getId().compareTo(o1.getId());
+			}
+		});
 		if (offset != null && limit != null) {
 			Map<String, Object> map = PageUtil.pagequery(users, offset, limit);
 			return new ResponseEntity<>(map, HttpStatus.OK);
@@ -99,9 +108,9 @@ public class ActivityWebContorller {
 	public ResponseEntity<?> disable(@PathVariable("id") Long id,
 			HttpServletRequest request, HttpServletResponse response) {
 		logger.debug("调用禁用/启用活动接口,id=" + id);
-		/*获取当前页数*/
-		String num=request.getParameter("num");
-		logger.debug("----当前页数为:"+num);
+		/* 获取当前页数 */
+		String num = request.getParameter("num");
+		logger.debug("----当前页数为:" + num);
 		Activity activity = activityService.findOneById(id);
 		if (activity.isDisable()) {
 			activity.setDisable(false);

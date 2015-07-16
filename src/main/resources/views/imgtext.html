@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>微信活动</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="icon" href="img/favicon.ico">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <link rel="icon" href="/img/favicon.ico" />
 </head>
 <body>
 <div class="header">
@@ -24,14 +24,6 @@
                 <a class="navbar-brand" href="index.html">微信活动</a>
             </div>
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-           <!-- <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">登录<span class="sr-only">(current)</span></a></li>
-                    <li><a href="#">注册</a></li>
-                </ul>
-            </div>-->
-            <!-- /.navbar-collapse -->
         </div>
         <!-- /.container-fluid -->
     </nav>
@@ -75,40 +67,40 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">图文标题</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control ac_title" id="activity_title" name="title" placeholder="">
+                                <input type="text" class="form-control ac_title" id="activity_title" name="title" placeholder="" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">图文摘要</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control img_type" id="img_type" name="type" value="news" style="display:none;">
+                                <input type="text" class="form-control img_type" id="img_type" name="type" value="news" style="display:none;" />
                                 <textarea type="text" class="form-control img_con" id="img_con" name="content" placeholder="不超过120字"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">内容链接</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control text_url" id="text_url" name="url" placeholder="">
+                                <input type="text" class="form-control text_url" id="text_url" name="url" placeholder="" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">题图链接</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control img_url" id="img_url" name="picUrl" placeholder="">
+                                <input type="text" class="form-control img_url" id="img_url" name="picUrl" placeholder="" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">微信菜单</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control menu_title" id="menu_title" name="menuName" placeholder="不超过10个字">
+                                <input type="text" class="form-control menu_title" id="menu_title" name="menuName" placeholder="不超过10个字" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">设置时间</label>
                             <div class="col-sm-8">
-                                <input type="date" id="date-start" name="startDate">
+                                <input type="date" id="date-start" name="startDate" />
                                 <label>到</label>
-                                <input type="date" id="date-end" name="endDate">
+                                <input type="date" id="date-end" name="endDate" />
                             </div>
 
                         </div>
@@ -130,83 +122,11 @@
 </div>
 
 <!--javascript-->
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
-<script type="text/javascript" src="js/bootstrapValidator.js"></script>
-<script type="text/javascript">
-    $('input[id=file]').change(function() {
-        var path = $(this).val();
-        path = path.split('\\');
-        path = path[path.length-1];
-        $('#uploadurl').val(path);
-    });
-</script>
-<script>
-    $(document).ready(function(){
-        $(".main_side > ul > li > a").click(function() {
-            $(this).addClass("selected").parents().siblings().find("a").removeClass("selected");
-        });
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/bootstrapValidator.js"></script>
+<script type="text/javascript" src="/js/imgtext.js"></script>
 
-    })
-
-</script>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#imgtext-form').bootstrapValidator({
-            message: '内容为空',
-            feedbackIcons: {
-                valid: 'glyphicon glyphicon-ok',
-                invalid: 'glyphicon glyphicon-remove',
-                validating: 'glyphicon glyphicon-refresh'
-            },
-            fields: {
-                title: {
-                    validators: {
-                        notEmpty: {
-                            message: '标题不能为空'
-                        }
-                    }
-                },
-                content: {
-                    validators: {
-                        notEmpty: {
-                            message: '摘要不能为空'
-                        }
-                    }
-                },
-                url: {
-                    validators: {
-                        notEmpty: {
-                            message: '内容链接不能为空'
-                        }
-                    }
-                },
-                picUrl: {
-                    validators: {
-                        notEmpty: {
-                            message: '题图链接不能为空'
-                        }
-                    }
-                },
-                menuName: {
-                    validators: {
-                        notEmpty: {
-                            message: '微信菜单不能为空'
-                        }
-                    }
-                },
-                startDate: {
-                    validators: {
-                        notEmpty: {
-                            message: '文章内容不能为空'
-                        }
-                    }
-                },
-
-            }
-        });
-    });
-</script>
 
 </body>
 </html>

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>微信活动</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="icon" href="img/favicon.ico">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <link rel="icon" href="/img/favicon.ico" />
 </head>
 <body>
 <div class="header">
@@ -21,17 +21,9 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">微信活动</a>
+                <a class="navbar-brand" href="/web/index">微信活动</a>
             </div>
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <!-- <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                 <ul class="nav navbar-nav navbar-right">
-                     <li><a href="#">登录<span class="sr-only">(current)</span></a></li>
-                     <li><a href="#">注册</a></li>
-                 </ul>
-             </div>-->
-            <!-- /.navbar-collapse -->
         </div>
         <!-- /.container-fluid -->
     </nav>
@@ -46,17 +38,17 @@
                 <span class="glyphicon glyphicon-inbox"></span>&nbsp;<span>活动管理</span>
             </div>
             <ul>
-                <li><a href="index.html">创建活动</a></li>
-                <li><a class="selected" href="listads.html">活动列表</a></li>
+                <li><a href="/web/index">创建活动</a></li>
+                <li><a class="selected" href="/web/listads">活动列表</a></li>
             </ul>
 
             <div class="side_title">
                 <span class="glyphicon glyphicon-qrcode"></span>&nbsp;<span>图文管理</span>
             </div>
             <ul>
-                <li><a href="imgtext.html">创建图文</a></li>
-                <li><a href="text.html">创建文本</a></li>
-                <li><a href="listimgtext.html">推送列表</a></li>
+                <li><a href="/web/imgtext">创建图文</a></li>
+                <li><a href="/web/text">创建文本</a></li>
+                <li><a href="/web/listimgtext">推送列表</a></li>
             </ul>
         </div>
 
@@ -69,7 +61,7 @@
                 <div class="con_body">
                     <div class="list_nav">
                         <ul class="nav nav-tabs" id="list_tabs">
-                            <li role="presentation" class="active" id="newName"><a href="#">看广告</a></li>
+                            <li role="presentation" class="active" id="newName"><a href="#">参与者信息</a></li>
                         </ul>
                     </div>
 
@@ -86,22 +78,8 @@
 
                         <div class="pagenav">
                             <nav>
-                                <ul class="pagination">
-                                    <li>
-                                        <a href="#" aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
-                                    </li>
-                                    <li><a href="#">1</a></li>
-                                    <li><a href="#">2</a></li>
-                                    <li><a href="#">3</a></li>
-                                    <li><a href="#">4</a></li>
-                                    <li><a href="#">5</a></li>
-                                    <li>
-                                        <a href="#" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
+                                <ul class="pagination" id="pg_list">
+                                	
                                 </ul>
                             </nav>
                         </div>
@@ -117,63 +95,9 @@
 </div>
 
 <!--javascript-->
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
-<script>
-    $('#list_tabs a').click(function (e) {
-        e.preventDefault()
-        $(this).tab('show')
-    })
-</script>
-<script>
-    $(document).ready(function () {
-        $(".main_side > ul > li > a").click(function () {
-            $(this).addClass("selected").parents().siblings().find("a").removeClass("selected");
-        });
-    })
-</script>
-<script>
-    function getQueryString(activityId) {
-        var reg = new RegExp("(^|&)" + activityId + "=([^&]*)(&|$)", "i");
-        var r = window.location.search.substr(1).match(reg);
-        if (r != null) return unescape(r[2]); return null;
-    }
-    function getQueryString(activityName) {
-        var reg = new RegExp("(^|&)" + activityName + "=([^&]*)(&|$)", "i");
-        var r = window.location.search.substr(1).match(reg);
-        if (r != null) return unescape(r[2]); return null;
-    }
-    $.ajax({
-        headers: {
-            Accept: "application/json; charset=utf-8"
-        },
-        type: "GET",
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/userads.js"></script>
 
-        url: "http://vps1.taoware.com/activity/"+getQueryString("activity_id")+"/wcUsers",
-        dataType: "json",
-        success: function (data) {
-            <!-- alert(data.length); -->
-            <!-- alert(data[1].nickname); -->
-
-            for (j = 0; j < data.length; j++) {
-                $("table").append(
-                        $("<tr class='tbody' id="+getQueryString("activity_id")+"><td>" +
-                        data[j].nickname
-                        + "</td><td>" +
-                        data[j].province
-                        + "</td><td>" +
-                        data[j].sex
-                        + "</td></tr>")
-                );
-
-
-            }
-
-        }
-
-    });
-
-
-</script>
 </body>
 </html>

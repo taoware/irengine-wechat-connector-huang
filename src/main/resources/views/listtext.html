@@ -39,7 +39,7 @@
             </div>
             <ul>
                 <li><a href="/web/index">创建活动</a></li>
-                <li><a class="selected" href="/web/listads">活动列表</a></li>
+                <li><a href="/web/listads">活动列表</a></li>
             </ul>
 
             <div class="side_title">
@@ -48,7 +48,7 @@
             <ul>
                 <li><a href="/web/imgtext">创建图文</a></li>
                 <li><a href="/web/text">创建文本</a></li>
-                <li><a href="/web/listimgtext">推送列表</a></li>
+                <li><a class="selected" href="/web/listimgtext">推送列表</a></li>
             </ul>
         </div>
 
@@ -56,14 +56,13 @@
         <div class="main_content col-md-10">
             <div>
                 <div class="con_title">
-                    活动列表
+                    推送列表
                 </div>
                 <div class="con_body">
                     <div class="list_nav">
                         <ul class="nav nav-tabs" id="list_tabs">
-                            <li role="presentation"><a href="/web/listads">看广告</a></li>
-                            <li role="presentation" class="active"><a href="/web/listdraw">抽奖</a></li>
-                            <li role="presentation"><a href="/web/listgame">玩游戏</a></li>
+                            <li role="presentation"><a href="/web/listimgtext">图文消息</a></li>
+                            <li role="presentation" class="active"><a href="/web/listdraw">文本消息</a></li>
                         </ul>
                     </div>
 
@@ -71,12 +70,12 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <td>活动名称</td>
+                                <td>菜单名</td>
                                 <td>开始/结束时间</td>
-                                <td>参与人数</td>
+                                <td>文字内容</td>
                                 <td>状态</td>
+                                
                                 <td>操作</td>
-                                <td>数据统计</td>
                             </tr>
                             </thead>
                         </table>
@@ -102,7 +101,7 @@
 <!--javascript-->
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" src="/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/js/listdraw.js"></script>
+<script type="text/javascript" src="/js/listtext.js"></script>
 <script type="text/javascript" src="/layer/layer.js"></script>
 
 </body>

@@ -3,10 +3,10 @@
 <head lang="en">
     <meta charset="UTF-8" />
     <title>微信活动</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
-    <link rel="icon" href="/img/favicon.ico">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <link rel="icon" href="/img/favicon.ico" />
 </head>
 <body>
 <div class="header">
@@ -21,17 +21,9 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">微信活动</a>
+                <a class="navbar-brand" href="/web/index">微信活动</a>
             </div>
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-           <!-- <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">登录<span class="sr-only">(current)</span></a></li>
-                    <li><a href="#">注册</a></li>
-                </ul>
-            </div>-->
-            <!-- /.navbar-collapse -->
         </div>
         <!-- /.container-fluid -->
     </nav>
@@ -46,17 +38,17 @@
                 <span class="glyphicon glyphicon-inbox"></span>&nbsp;<span>活动管理</span>
             </div>
             <ul>
-                <li><a class="selected" href="index.html">创建活动</a></li>
-                <li><a href="listads.html">活动列表</a></li>
+                <li><a class="selected" href="/web/index">创建活动</a></li>
+                <li><a href="/web/listads">活动列表</a></li>
             </ul>
 
             <div class="side_title">
                 <span class="glyphicon glyphicon-qrcode"></span>&nbsp;<span>图文管理</span>
             </div>
             <ul>
-                <li><a href="imgtext.html">创建图文</a></li>
-                <li><a href="text.html">创建文本</a></li>
-                <li><a href="listimgtext.html">推送列表</a></li>
+                <li><a href="/web/imgtext">创建图文</a></li>
+                <li><a href="/web/text">创建文本</a></li>
+                <li><a href="/web/listimgtext">推送列表</a></li>
             </ul>
         </div>
 
@@ -75,31 +67,31 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">活动标题</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control ac_title" id="activity_title" name="name" placeholder="">
+                                <input type="text" class="form-control ac_title" id="activity_title" name="name" placeholder="" />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">活动描述</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control ac_title" id="activity_desc" name="type" value="ad" style="display:none;">
+                                <input type="text" class="form-control ac_title" id="activity_desc" name="type" value="ad" style="display:none;" />
                                 <textarea type="text" class="form-control ac_desc" id="activity" name="description" placeholder=""></textarea>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">活动时间</label>
                             <div class="col-sm-8">
-                                <input type="date" id="date-start" name="startDate">
+                                <input type="date" id="date-start" name="startDate" />
                                 <label>到</label>
-                                <input type="date" id="date-end" name="endDate">
+                                <input type="date" id="date-end" name="endDate" />
                             </div>
 
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">活动文件</label>
                             <div class="col-sm-8">
-                                <input type="file" name="file" id="file" style="display:none">
+                                <input type="file" name="file" id="file" style="display:none" />
                                 <div class="input_append">
-                                    <input type="text" id="uploadurl" class="input_large" value=".zip形式" disabled>
+                                    <input type="text" id="uploadurl" class="input_large" value=".zip形式" disabled="true" />
                                     <a class="btn btn-primary input_view" onclick="$('input[id=file]').click();">
                                         <span class="glyphicon glyphicon-folder-open"></span> 浏览
                                     </a>
@@ -127,66 +119,9 @@
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" src="/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/js/bootstrapValidator.js"></script>
-<script type="text/javascript">
-    $('input[id=file]').change(function() {
-        var path = $(this).val();
-        path = path.split('\\');
-        path = path[path.length-1];
-        $('#uploadurl').val(path);
-    });
-</script>
-<script>
-    $(document).ready(function(){
-        $(".main_side > ul > li > a").click(function() {
-            $(this).addClass("selected").parents().siblings().find("a").removeClass("selected");
-        });
+<script type="text/javascript" src="/js/file_input.js"></script>
+<script type="text/javascript" src="/js/validator.js"></script>
 
-    })
-
-</script>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#ads-form').bootstrapValidator({
-            message: '内容为空',
-            feedbackIcons: {
-                valid: 'glyphicon glyphicon-ok',
-                invalid: 'glyphicon glyphicon-remove',
-                validating: 'glyphicon glyphicon-refresh'
-            },
-            fields: {
-                name: {
-                    validators: {
-                        notEmpty: {
-                            message: '标题不能为空'
-                        }
-                    }
-                },
-                description: {
-                    validators: {
-                        notEmpty: {
-                            message: '描述不能为空'
-                        }
-                    }
-                },
-                file: {
-                    validators: {
-                        notEmpty: {
-                            message: '文件不能为空'
-                        }
-                    }
-                },
-                startDate: {
-                    validators: {
-                        notEmpty: {
-                            message: '文章内容不能为空'
-                        }
-                    }
-                },
-
-            }
-        });
-    });
-</script>
 
 </body>
 </html>
