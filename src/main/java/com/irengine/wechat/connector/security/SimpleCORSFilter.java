@@ -1,4 +1,4 @@
-package com.irengine.wechat.connector;
+package com.irengine.wechat.connector.security;
 
 import java.io.IOException;
 

@@ -72,30 +72,29 @@ public class UploadFileUtil {
 		path = path.substring(0, path.lastIndexOf("/"));
 		@SuppressWarnings("resource")
 		ZipFile zip = new ZipFile(zipFile);
-		// String name = "" + System.currentTimeMillis();
+		String name = "" + System.currentTimeMillis();
 		Enumeration entries1 = zip.entries();
 		ZipEntry entry1 = (ZipEntry) entries1.nextElement();
-		String name = entry1.getName().substring(0, entry1.getName().length()-1);
+		// String name = entry1.getName().substring(0,
+		// entry1.getName().length()-1);
 		for (Enumeration entries = zip.entries(); entries.hasMoreElements();) {
 			ZipEntry entry = (ZipEntry) entries.nextElement();
 			String zipEntryName = entry.getName();
-			// zipEntryName = name
-			// + zipEntryName.substring(zipEntryName.indexOf("/"));
+			zipEntryName = name
+					+ zipEntryName.substring(zipEntryName.indexOf("/"));
 			InputStream in = zip.getInputStream(entry);
 			// outPath输出目录
-			String outPath="";
-			if(zipEntryName.indexOf(".html")!=-1){
-				outPath = path.substring(
-						0,
-						path.lastIndexOf("/") < 0 ? path.lastIndexOf("\\") : path
-								.lastIndexOf("/"))
+			String outPath = "";
+			if (zipEntryName.indexOf(".html") != -1) {
+				outPath = path.substring(0,
+						path.lastIndexOf("/") < 0 ? path.lastIndexOf("\\")
+								: path.lastIndexOf("/"))
 						+ "/WEB-INF/classes/views/" + zipEntryName;
-			}else{
-				outPath = path.substring(
-						0,
-						path.lastIndexOf("/") < 0 ? path.lastIndexOf("\\") : path
-								.lastIndexOf("/"))
-						+ "/WEB-INF/classes/static/" + zipEntryName;
+			} else {
+				outPath = path.substring(0,
+						path.lastIndexOf("/") < 0 ? path.lastIndexOf("\\")
+								: path.lastIndexOf("/"))
+						+ "/WEB-INF/classes/static/web/" + zipEntryName;
 			}
 			// 判断路径是否存在,不存在则创建文件路径
 			File file = new File(outPath.substring(0, outPath.lastIndexOf('/')));

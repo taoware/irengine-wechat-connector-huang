@@ -65,6 +65,11 @@ public class OutMessage extends EntityBase{
 	}
 
 	@Transient
+	public String getReturnContent(){
+		return getsubstring(content, 60);
+	}
+	
+	@Transient
 	public String getStatusText(){
 		if(disable==true){
 			return "已停止";
@@ -175,6 +180,27 @@ public class OutMessage extends EntityBase{
 		this.disable = disable;
 	}
 
+	/**处理文本消息字符串过长显示不美观问题*/
+	private String getsubstring(String content, int sublength) {
+		int length = content.getBytes().length;
+		if (sublength >= length) {
+			return content;
+		} else {
+				int i = 0;
+				int j = 0;
+				for (; i < length; i++) {
+					if (content.substring(0, i + 1).getBytes().length >= sublength) {
+						j = content.substring(0, i + 1).getBytes().length;
+						break;
+					}
+
+				}
+				String substring = j > sublength ? content.substring(0, i)
+						: content.substring(0, i + 1);
+				return substring+"...";
+		}
+	}
+	
 }
 
 

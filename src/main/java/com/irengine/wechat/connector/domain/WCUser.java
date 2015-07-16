@@ -21,6 +21,8 @@ public class WCUser  extends EntityBase{
 	
 	private String unionId;
 
+	private String mobile;
+	
 	public WCUser() {
 		super();
 	}
@@ -35,6 +37,14 @@ public class WCUser  extends EntityBase{
 		this.province = province;
 		this.country = country;
 		this.unionId = unionId;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 
 	public String getOpenId() {

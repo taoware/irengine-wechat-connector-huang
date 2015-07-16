@@ -135,10 +135,10 @@ public class OutMessageController {
 			logger.debug("更新菜单出错");
 			e.printStackTrace();
 			model.addAttribute("msg", "更新菜单出错");
-			return "success";
+			return "listimgtext";
 		}
 		model.addAttribute("msg", "i got it");
-		return "success";
+		return "listimgtext";
 	}
 
 }

@@ -1,8 +1,10 @@
 package com.irengine.wechat.connector.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +19,7 @@ public class OutMessageService {
 	private OutMessageDao outMessageDao;
 
 	public List<OutMessage> findAll() {
-		return (List<OutMessage>) outMessageDao.findAll();
+		return (List<OutMessage>) outMessageDao.findAll(new Sort(Sort.Direction.DESC, "id"));
 	}
 
 	public OutMessage findOneById(long id) {
@@ -31,7 +33,7 @@ public class OutMessageService {
 	public List<OutMessage> findAllByType(String type) {
 		return outMessageDao.findAllByType(type);
 	}
-
+	
 	public long count() {
 		return outMessageDao.count();
 	}

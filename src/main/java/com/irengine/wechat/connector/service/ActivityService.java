@@ -15,6 +15,8 @@ import me.chanjar.weixin.common.exception.WxErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +46,7 @@ public class ActivityService {
 	}
 
 	public List<Activity> findAll() {
-		return (List<Activity>) activityDao.findAll();
+		return (List<Activity>) activityDao.findAll(new Sort(Sort.Direction.DESC, "id"));
 	}
 
 	public Activity findOneById(Long id) {
@@ -57,13 +59,7 @@ public class ActivityService {
 		logger.debug("自动生成菜单并且更新");
 		/* 检测所有活动 */
 		List<Activity> activitys = findAll();
-		if(activitys.size()>5){
-			activitys=activitys.subList(0, 5);
-		}
 		List<OutMessage> messages = outMessageService.findAll();
-		if(messages.size()>5){
-			messages=messages.subList(0, 5);
-		}
 		/* 时间符合即更新到第一个以及菜单按钮 */
 		Date now = new Date();
 		// 待添加的活动
@@ -98,6 +94,13 @@ public class ActivityService {
 					&& (now.before(endDate) || now.equals(endDate))) {
 				addMessages.add(message);
 			}
+		}
+		/*限制最多生成5个二级菜单*/
+		if(addActivitys.size()>5){
+			addActivitys=addActivitys.subList(0, 5);
+		}
+		if(addMessages.size()>5){
+			addMessages=addMessages.subList(0, 5);
 		}
 		/* 生成菜单文件 */
 		String menuJson = DealWithMenuJson.setActivity(addActivitys,

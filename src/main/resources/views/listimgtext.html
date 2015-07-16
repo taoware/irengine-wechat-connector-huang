@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>微信活动</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="icon" href="img/favicon.ico">
+</head>
+<body>
+<div class="header">
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">微信活动</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <!-- <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                 <ul class="nav navbar-nav navbar-right">
+                     <li><a href="#">登录<span class="sr-only">(current)</span></a></li>
+                     <li><a href="#">注册</a></li>
+                 </ul>
+             </div>-->
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+</div>
+
+<div class="wrap">
+
+    <div class="container">
+
+        <div class="main_side col-md-2">
+            <div class="side_title">
+                <span class="glyphicon glyphicon-inbox"></span>&nbsp;<span>活动管理</span>
+            </div>
+            <ul>
+                <li><a href="index.html">创建活动</a></li>
+                <li><a href="listads.html">活动列表</a></li>
+            </ul>
+
+            <div class="side_title">
+                <span class="glyphicon glyphicon-qrcode"></span>&nbsp;<span>图文管理</span>
+            </div>
+            <ul>
+                <li><a href="imgtext.html">创建图文</a></li>
+                <li><a href="text.html">创建文本</a></li>
+                <li><a class="selected" href="listimgtext.html">推送列表</a></li>
+            </ul>
+        </div>
+
+
+        <div class="main_content col-md-10">
+            <div>
+                <div class="con_title">
+                    推送列表
+                </div>
+                <div class="con_body">
+                    <div class="list_nav">
+                        <ul class="nav nav-tabs" id="list_tabs">
+                            <li role="presentation" class="active"><a href="listimgtext.html">图文消息</a></li>
+                            <li role="presentation"><a href="listdraw.html">文本消息</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="list_content">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <td>菜单名</td>
+                                <td>开始/结束时间</td>
+                                <td>图文标题</td>
+                                <td>状态</td>
+                                <td>参与人数</td>
+                                <td>操作</td>
+                            </tr>
+                            </thead>
+                        </table>
+
+                        <div class="pagenav">
+                            <nav>
+                                <ul class="pagination">
+                                    <li>
+                                        <a href="#" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li><a href="#">1</a></li>
+                                    <li><a href="#">2</a></li>
+                                    <li><a href="#">3</a></li>
+                                    <li><a href="#">4</a></li>
+                                    <li><a href="#">5</a></li>
+                                    <li>
+                                        <a href="#" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!--javascript-->
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="layer/layer.js"></script>
+<script>
+    $('#list_tabs a:first').click(function () {
+        window.location.href='listads.html';
+    });
+    $('#list_tabs li:eq(1) a').click(function () {
+        window.location.href='listdraw.html';
+    });
+    $('#list_tabs a:last').click(function () {
+        window.location.href='listgame.html';
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $(".main_side > ul > li > a").click(function () {
+            $(this).addClass("selected").parents().siblings().find("a").removeClass("selected");
+        });
+    })
+</script>
+<script>
+    var result;
+    $.ajax({
+        headers: {
+            Accept: "application/json; charset=utf-8"
+        },
+        type: "GET",
+        url: "http://vps1.taoware.com/message?type=news",
+        dataType: "json",
+        async: false,
+        success: function (data) {
+
+            result = data;
+
+            for (i = 0; i < data.length; i++) {
+                var imgtextId = data[i].id;
+                var statustext = data[i].statusText;
+                var statusopen = '<a href="javascript:void(0);"  id="imgtextStatus" onclick="operate( ' + imgtextId + ')">开启</a>';
+                var statusclose = '<a href="javascript:void(0);"  id="imgtextStatus" onclick="operate( ' + imgtextId + ')">关闭</a>';
+                var statusinit = '';
+                if (statustext == '未开始' || statustext == '已停止') {
+                    statusinit = statusopen;
+                }
+                else if (statustext == '进行中') {
+                    statusinit = statusclose;
+                }
+                else {
+                    statusinit = statusinit;
+                }
+                $("table").append(
+                        $("<tr class='tbody' id=" + imgtextId + "><td>" +
+                        data[i].menuName
+                        + "</td><td>" +
+                        data[i].startDate + '&nbsp;' + '&nbsp;' + data[i].endDate
+                        + "</td><td>" +
+                        '<a href="'+data[i].url +'" target="_blank" id="activityTitle">'+data[i].title+'</a>'
+                        + "</td><td>" +
+                        statustext
+                        + "</td><td>" +
+                        data[i].count
+                        + "</td><td>" +
+                        statusinit
+                        + "</td></tr>")
+                );
+
+
+            }
+
+
+        }
+
+
+    });
+
+
+    var operate = function (event) {
+
+        layer.config({
+            extend: ['skin/seaning/style.css'],
+            skin: 'layer-ext-seaning'
+        });
+
+        $("tr[id='" + event + "']").click(function () {
+            layer.confirm('确定操作？', {
+                btn: ['确认', '取消'], //按钮
+                shade: false //不显示遮罩
+            }, function () {
+                $.ajax({
+                    url: 'http://vps1.taoware.com/message/' + event + '/disable',
+                    type: 'GET',
+                    success: function () {
+                        window.location.href = 'listimgtext.html';
+                    }
+                });
+            }, function () {
+                layer.msg('已取消', {shift: 0});
+            });
+
+        })
+    }
+
+    var check = function (event) {
+
+
+        $("tr[id='" + event + "']").click(function () {
+            $.ajax({
+                url: 'http://vps1.taoware.com/activity/' + event + '/wcUsers',
+                type: 'GET',
+                success: function () {
+                    window.location.href = 'userads.html?activity_id=' + event;
+                }
+
+            });
+
+        })
+    }
+
+
+</script>
+</body>
+</html>

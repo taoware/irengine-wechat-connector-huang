@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,8 +96,12 @@ public class ActivityWebContorller {
 	 * 禁用活动 GET ->/activity/{id}/disable
 	 */
 	@RequestMapping("/{id}/disable")
-	public ResponseEntity<?> disable(@PathVariable("id") Long id) {
+	public ResponseEntity<?> disable(@PathVariable("id") Long id,
+			HttpServletRequest request, HttpServletResponse response) {
 		logger.debug("调用禁用/启用活动接口,id=" + id);
+		/*获取当前页数*/
+		String num=request.getParameter("num");
+		logger.debug("----当前页数为:"+num);
 		Activity activity = activityService.findOneById(id);
 		if (activity.isDisable()) {
 			activity.setDisable(false);
@@ -161,7 +166,7 @@ public class ActivityWebContorller {
 			return "error";
 		}
 		model.addAttribute("msg", "i got it!");
-		return "success";
+		return "listads";
 	}
 
 	/**
